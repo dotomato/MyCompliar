@@ -162,3 +162,24 @@
 恩，比较无聊，不放了。
 
 仿真器fpga_cpu_sim可以直接运行.mir文件无压力，一比一真实模拟CPU动作，各种调试过程中的错误也能看得到。
+
+### 怎么样运行
+
+这个还是要写了下的，不然时候久了真的不记得了……
+
+首先是编译编译器，直接javac编译就好，参见build.cmd
+
+	javac -d bin src/com/cj/MyCompliar/*
+
+然后运行编译器，参见run.cmd
+
+	java -cp bin com.cj.MyCompliar.Acgui %1
+	
+编译器会产生：
+ - 人可读的.mio汇编文件
+ - 给仿真器用的.mir文件
+ - 给FPGA芯片烧ROM用的.mif文件（用Quarus II烧录）
+
+产生的路径无法指定，就是这么任性（当时懒得写了）
+
+至于为什么主类是Acgui却没有GUI，我猜是三年前的我正打算用java用一个GUI，然后发现swing太坑，于是不了了之~
