@@ -2,16 +2,28 @@
 一个玩具编译器
 
 很久之前写的一个编译器项目了，大概是大三的时候吧。
+### 起因
+当时上的一个课的老师和我们说，中国就是缺少自己的编译器。得，我最喜欢造轮子了，让我来，然后就把编译原理看了，开始动手。
+谁知道动手之后才开始这是一个大坑啊！！！
+你要造编译器是吧，那你得针对一种语言啊，看了看各种现有语言的标准，复杂得要命，要想兼容下去，那不得挂。于是，自己设计了一个高级语言。
+设计完高级语言后，那还得有编译后的汇编语言啊，看了看x86上的汇编，同样吐血……又自己设计了一个汇编语言。
+好了，高级语言有了，汇编语言有了，可以开始干活了吧，吭哧吭哧写了一星期，差不多了，有点像样子，突然发现，自己的编译，没东西能够去运行它啊。好，又得用FPGA实现一个CPU软核。
+写CPU软核的过程中又会发现之前的汇编不切合实际，于是又要在机器和软件之前协调标准，改谁改哪里怎么样改才能兼顾各个方面又得自己琢磨。最要拿的是这底层的语言设计一改，有时候整个编译器上层就废了，又得重新来。于是又一个星期。
+期间还包括硬件调试太难了，为了方便调式，又得写一个软件的CPU仿真器。
+不过到最后写了若干个星期（大于2），终于是完工的时候，看着跑质数的程序在FPGA板子上不断输出当前最新结果，觉得还是很有成就感的，特别的爽，爽过吸大麻。（虽然这软CPU跑得贼慢，不知道和8060哪个快……）
+以上就是坑爹的编译器项目的始终。
 
 ### 其中软件包括：
  - MyCompliar 编译器本体，用于将高级语言编译成汇编语言、机器语言、ROM文件，是一个完成的工具链。编译器本身使用JAVA编写。
  - fpga_cpu_sim 仿真器，可以调试机器语言，输出程序每一条指令的运算过程、栈状态、寄存器状态。仿真器本身使用Delphi编写。
  - cpu01 CPU软核，可以在EP4CE6E22芯片上运行。软核本身使用VHDL编写。
  
-### 语言定义包括：
+### 语言标准：
 
 一个自定义的高级语言，有点像pascal又有点像c，支持常见的if语句、while语句、四则运算、布尔表达式、子函数、端口输出，总之是一个只是为了我方便而创造出来的语言啦，不过最大特色是支持动态大小的数组这个是真的。
-一个例子如下：
+子函数的参数必须有arg修饰符（为什么当初这样子设计我也不记得了……），变量声明必须位于函数名声明的之后，以及花括号的程序主体之前。数组声明的大小可以是运行时确定的。程序的入口函数的声明必须是`int main(void)`，文件结尾必须是`eof;`。
+其它的方便看看例子就能明白了，不细说了。
+一个求第i个大的质数的例子程序如下：
 
 	int prime(arg int max)
 	int num[max];
@@ -58,7 +70,15 @@
 	}
 	eof;
 
-然后编译出来的汇编是：
+如果有多个参数，声明如下：
+
+	int add(arg int a;arg int b)
+	{
+	  return a+b;
+	}
+	
+
+然后编译出来的汇编是.mio文件，内容会是这个样子：
 
 	GOTO main
 	prime:
@@ -84,154 +104,44 @@
 	L10:
 	PUSH M2
 	PUSH M0
-	CMP
-	JGE L2
-	GOTO L1
-	L1:
-	PUSH 1
-	POP M7
-	PUSH 0
-	POP M5
-	PUSH M3
-	PUSH 1
-	ADD
-	POP M3
-	L7:
-	PUSH M5
-	PUSH M2
-	CMP
-	JGE L4
-	GOTO L3
-	L3:
-	PUSH M3
-	PUSH M1
-	PUSH M5
-	ADD
-	TABLE
-	DIV
-	POP M6
-	PUSH M3
-	PUSH M1
-	PUSH M5
-	ADD
-	TABLE
-	PUSH M6
-	MUL
-	DEC
-	POP M6
-	PUSH M6
-	PUSH 0
-	CMP
-	JNE L6
-	GOTO L5
-	L5:
-	PUSH M2
-	POP M5
-	PUSH 0
-	POP M7
-	L6:
-	PUSH M5
-	PUSH 1
-	ADD
-	POP M5
-	GOTO L7
-	L4:
-	PUSH M7
-	PUSH 1
-	CMP
-	JNE L9
-	GOTO L8
-	L8:
-	PUSH M1
-	PUSH M2
-	ADD
-	PUSH M3
-	MOV
-	PUSH M2
-	PUSH 1
-	ADD
-	POP M2
-	L9:
-	GOTO L10
-	L2:
-	PUSH M1
-	PUSH M0
-	PUSH 1
-	DEC
-	ADD
-	TABLE
-	SETRTN
-	PUSH FP
-	PUSH 3
-	ADD
-	POP SP
-	POP FP
-	POP PC
-	fac:
-	PUSH M0
-	PUSH 1
-	CMP
-	JNE L12
-	GOTO L11
-	L11:
-	PUSH 1
-	SETRTN
-	GOTO L14
-	L12:
-	PUSH M0
-	PUSH 0
-	PUSH L13
-	PUSH FP
-	PUSH M0
-	PUSH 1
-	DEC
-	PUSH SP
-	PUSH 4
-	DEC
-	POP FP
-	GOTO fac
-	L13:
-	MUL
-	SETRTN
-	L14:
-	PUSH FP
-	PUSH 3
-	ADD
-	POP SP
-	POP FP
-	POP PC
-	add:
-	PUSH M0
-	PUSH M1
-	ADD
-	SETRTN
-	PUSH FP
-	PUSH 3
-	ADD
-	POP SP
-	POP FP
-	POP PC
-	main:
-	PUSH 0
-	PUSH 0
-	PUSH 0
-	PUSH 0
-	PUSH 0
-	PUSH 0
-	PUSH 0
-	PUSH L15
-	PUSH FP
-	PUSH 10
-	PUSH SP
-	PUSH 4
-	DEC
-	POP FP
-	GOTO prime
-	L15:
-	WRITE
-	PUSH FP
-	PUSH 3
-	ADD
-	POP SP
-	POP FP
-	POP PC
+	...
+	
+好吧太长了就不放上来了
+
+### 一些技术细节
+当时在设计CPU结构的时候，没有选择使用通用寄存器，因为使用通用寄存器会产生调度和函数调用过程中保存恢复现场的问题，在小一点的程序里，使用栈来实现状态的保存会更加方便（好吧就是我水平不够写不出通用寄存器调度的方案来）。所以寄存器就只有SP, FP, PC三个，SP是栈顶指针，FP是当前程序框架指针，PC是指令位置指针。
+程序的输出设施有一个CPU的输出寄存器，在EP4CE6E22芯片开发板上我给它连了一个译码器+数码管，这样子就相当于拥有一个小屏幕可以实时查看输出了。（虽然只能显示4位数……）
+
+高级语言的具体语法规划有52条（如果我没有数错的话），代码可以在MyCompliar/src/com/cj/MyCompliar/Arrcompliar.java文件里面查看。然后汇编语言的指令有26条，也就是说CPU的指令也只有26条，具体是：
+
+	  1     2       3    4    5     6   7   8  9  10  11 12  13  14  15  16 17   18     19     20   21  22  23     24   25    26
+	"PUSH,PUSH_R,PUSH_M,POP,POP_M,GOTO,CMP,JG,JGE,JL,JLE,JE,JNE,ADD,DEC,DIV,MUL,SETRTN,ARRWR,TABLE,MOV,LEA,ADDSP,DECSP,WRITE,READ";
+
+然后在CPU具体搭建方面，当时只设计了8位总线，也就是说寻址空间只有2^8=256，最大的栈容量和指令容量都是只有256……
+但是指令长度使用的是16位设计，操作码在高8位，操作数在低8位，所以能操作的整形数据可以满打满算有8位。
+感受一下机器的指令：（在.mir文件里）
+
+	6 151 
+	0 0 
+	3 0 
+	1 0 
+	1 0 
+	1 0 
+	1 0 
+	1 0 
+	1 0 
+	19 1 
+	1 1 
+	5 4 
+	3 1 
+	1 0 
+	14 0 
+	1 2 
+	21 0 
+	1 1 
+	5 2 
+	1 2 
+	...
+
+恩，比较无聊，不放了。
+仿真器fpga_cpu_sim可以直接运行.mir文件无压力，一比一真实模拟CPU动作，各种调试过程中的错误也能看得到。
