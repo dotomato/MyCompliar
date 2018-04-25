@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<LOG_ROOT>
+	<PROJECT NAME="top">
+		<CBX_INST_ENTRY INSTANCE_NAME="|top|core:cpu|lpm_divide:Div0" CBX_FILE_NAME="lpm_divide_nhm.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|top|core:cpu|lpm_mult:Mult0" CBX_FILE_NAME="mult_aat.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|top|core:cpu|rom0:si0|altsyncram:altsyncram_component" CBX_FILE_NAME="altsyncram_6t91.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|top|core:cpu|rom1:si1|altsyncram:altsyncram_component" CBX_FILE_NAME="altsyncram_7t91.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|top|core:cpu|ram1:sta|altsyncram:altsyncram_component" CBX_FILE_NAME="altsyncram_35g1.tdf"/>
+	</PROJECT>
+</LOG_ROOT>

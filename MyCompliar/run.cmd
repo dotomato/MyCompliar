@@ -1,0 +1,1 @@
+java -cp bin com.cj.MyCompliar.Acgui %1

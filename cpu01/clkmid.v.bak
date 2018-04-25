@@ -1,0 +1,20 @@
+module clkmid(
+input iclk,
+output mclk
+);
+
+reg [31:0] clkcount;
+
+initial
+clkcount <= 0 ;
+
+always @(posedge iclk)
+begin
+	if(clkcount==25000000) begin
+		mclk<=~mclk;
+		clkcount <= 0;
+	end else 
+		clkcount <= clkcount + 1;
+end
+
+endmodule

@@ -1,0 +1,11 @@
+
+State Machine - |top|core:cpu|core_step
+Name core_step.0000 core_step.0010 core_step.0001 
+core_step.0000 0 0 0 
+core_step.0001 1 0 1 
+core_step.0010 1 1 0 
+
+State Machine - |top|core:cpu|ready_step
+Name ready_step.0001 
+ready_step.0000 0 
+ready_step.0001 1 

@@ -1,0 +1,8 @@
+module core(
+
+);
+
+
+reg [7:0] sp;
+wire [7:0] sp_add_1;
+assign sp_add_1 = sp + 1;
